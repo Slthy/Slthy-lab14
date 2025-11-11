@@ -34,25 +34,31 @@ public class Client{
         this.s = new Socket(this.host, this.port);
     }
 
-    public void handshake(){
+    
+
+    public String request(String payload){
         try{
             PrintWriter pw = new PrintWriter(sock.getOutputStream());
-            pw.println(PASSWORD);
+            pw.println(payload);
             pw.flush();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
             String reply = in.readLine(); 
-            System.out.println("Server said: " + reply);
-
             
             pw.close();
             in.close();
             sock.close();
+
+            return reply;
         }catch(Exception e){
             System.err.print("IOException");
             System.exit(1);
         }
+    }
+
+    public void handshake(){
+        String response = request(PASSWORD);
     }
 
 

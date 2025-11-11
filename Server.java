@@ -2,6 +2,8 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
+import java.time.LocalDateTime;
+
 /*
 Initial Handshake
     When a client first connects, they need to send a key to the server to 
@@ -38,9 +40,11 @@ Server
 
 public class Server{
 
-    ServerSocket serverSock;
+    private ServerSocket serverSock;
+    private ArrayList<LocalDateTime> connectedTimes;
 
-    public EchoSocketServer(int port){
+    public Server(int port){
+        this.connectedTimes = new ArrayList<LocalDateTime>();
         try{
             serverSock = new ServerSocket(port);
         }catch(Exception e){
@@ -50,8 +54,13 @@ public class Server{
         
     }
 
-    public void serve(){
-        while(true){
+    public ArrayList<LocalDateTime> getConnectedTimes(){
+        // tbd
+        return new ArrayList<LocalDateTime>();
+    }
+
+    public void serve(int n){
+        for(int i = 0; i<n; i++){
             try{
                 //accept incoming connection
                 Socket clientSock = serverSock.accept();
@@ -61,6 +70,18 @@ public class Server{
                 
                 //continue looping
             }catch(Exception e){} //exit serve if exception
+        }
+    }
+
+    public void disconnect(){
+        try {
+            if (this.serverSock != null && !this.serverSock.isClosed()) {
+                serverSock.close();
+                System.out.println("ServerSocket closed successfully.");
+            }
+        } catch (IOException e) {
+            System.err.println("Error closing ServerSocket: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
