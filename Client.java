@@ -6,7 +6,7 @@ import java.io.*;
 /*
 Initial Handshake
     When a client first connects, they need to send a key to the server to 
-    indicate they’re a valid client (recall that anyone can connect to public ports). 
+    indicate they're a valid client (recall that anyone can connect to public ports). 
     Here, the key will be the very insecure passcode 12345; 
     the server should look for each client to send such a passcode as their first message, 
     make sure it matches this number, and only then allow the client to actually 
@@ -25,42 +25,69 @@ public class Client{
     private Socket s;
     private String host;
     private int port;
+    private PrintWriter pw;
+    private BufferedReader in;
 
     private static String PASSWORD = "12345";
 
     public Client(String host, int port){
         this.host = host;
         this.port = port;
-        this.s = new Socket(this.host, this.port);
+        try{
+            this.s = new Socket(this.host, this.port);
+            this.pw = new PrintWriter(this.s.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(this.s.getInputStream()));
+        } catch (UnknownHostException e) {
+            System.err.print("UnknownHostException");
+            System.exit(1);
+        } catch(Exception e){
+            System.err.print("IOException");
+            System.exit(1);
+        }
+        
     }
 
-    
 
     public String request(String payload){
         try{
-            PrintWriter pw = new PrintWriter(sock.getOutputStream());
             pw.println(payload);
             pw.flush();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-
             String reply = in.readLine(); 
-            
-            pw.close();
-            in.close();
-            sock.close();
 
             return reply;
         }catch(Exception e){
             System.err.print("IOException");
             System.exit(1);
         }
+        return null;
     }
 
     public void handshake(){
-        String response = request(PASSWORD);
+        try{
+            pw.println(PASSWORD);
+            pw.flush();
+        }catch(Exception e){
+            System.err.print("IOException");
+            System.exit(1);
+        }
     }
 
+    public void disconnect(){
+        try{
+            if(pw != null) pw.close();
+            if(in != null) in.close();
+            if(this.s != null) this.s.close();
+            this.s = null; // avoid dangling
+        } catch(Exception e){
+            System.err.print("IOException");
+            System.exit(1);
+        }
+    }
+
+    public Socket getSocket(){
+        return s;
+    }
 
 
     public static void main(String args[]){

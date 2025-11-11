@@ -28,7 +28,7 @@ public class Lab14_Tester {
 
         Socket remote = serverSocket.accept();
         client.handshake();
-        Thread.sleep(1000); // give it a second to actually flush
+        //Thread.sleep(1); // give it a second to actually flush
         BufferedReader incoming = new BufferedReader(new InputStreamReader(remote.getInputStream()));
         line = incoming.readLine();
         incoming.close();

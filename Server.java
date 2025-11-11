@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /*
 Initial Handshake
     When a client first connects, they need to send a key to the server to 
-    indicate they’re a valid client (recall that anyone can connect to public ports). 
+    indicate they're a valid client (recall that anyone can connect to public ports). 
     Here, the key will be the very insecure passcode 12345; 
     the server should look for each client to send such a passcode as their first message, 
     make sure it matches this number, and only then allow the client to actually 
@@ -42,6 +42,8 @@ public class Server{
 
     private ServerSocket serverSock;
     private ArrayList<LocalDateTime> connectedTimes;
+    private static String PASSWORD = "12345";
+
 
     public Server(int port){
         this.connectedTimes = new ArrayList<LocalDateTime>();
@@ -56,7 +58,8 @@ public class Server{
 
     public ArrayList<LocalDateTime> getConnectedTimes(){
         // tbd
-        return new ArrayList<LocalDateTime>();
+        Collections.sort(connectedTimes);
+        return new ArrayList<LocalDateTime>(connectedTimes);
     }
 
     public void serve(int n){
@@ -65,6 +68,7 @@ public class Server{
                 //accept incoming connection
                 Socket clientSock = serverSock.accept();
                 System.out.println("New connection: "+clientSock.getRemoteSocketAddress());
+                connectedTimes.add(LocalDateTime.now());
                 //start the thread
                 (new ClientHandler(clientSock)).start();
                 
@@ -100,8 +104,19 @@ public class Server{
                 in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
                 //read and echo back forever!
+
+                // handshake
+                String msg = in.readLine();
+
+                if(!msg.equals(PASSWORD)) {
+                    out.close();
+                    in.close();
+                    sock.close();
+                    return;
+                }
+
                 while(true){
-                    String msg = in.readLine();
+                    msg = in.readLine();
                     if(msg == null) break; //read null, remote closed
                     out.println(msg);
                     out.flush();
