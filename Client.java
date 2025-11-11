@@ -60,7 +60,7 @@ public class Client{
             System.err.print("IOException");
             System.exit(1);
         }
-        return null;
+        return "couldn't handshake";
     }
 
     public void handshake(){

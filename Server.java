@@ -89,6 +89,12 @@ public class Server{
         }
     }
 
+    public int factor(int n){
+        int count = 0;
+        for (int i = 1; i <= n; i++) if (n % i == 0) count++;
+        return count;
+    }
+
     private class ClientHandler extends Thread{
 
         Socket sock;
@@ -109,6 +115,8 @@ public class Server{
                 String msg = in.readLine();
 
                 if(!msg.equals(PASSWORD)) {
+                    out.println("couldn't handshake");
+                    out.flush();
                     out.close();
                     in.close();
                     sock.close();
@@ -118,7 +126,12 @@ public class Server{
                 while(true){
                     msg = in.readLine();
                     if(msg == null) break; //read null, remote closed
-                    out.println(msg);
+                    try{
+                        int num = Integer.parseInt(msg); // handle client communication with server for too large number
+                        out.println("The number " + msg + " has " + factor(num) + " factors");
+                    }catch(Exception e){
+                        out.println("There was an exception on the server");
+                    }
                     out.flush();
                 }
 
