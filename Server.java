@@ -57,9 +57,8 @@ public class Server{
     }
 
     public ArrayList<LocalDateTime> getConnectedTimes(){
-        // tbd
-        Collections.sort(connectedTimes);
-        return new ArrayList<LocalDateTime>(connectedTimes);
+        Collections.sort(connectedTimes);   // sort
+        return connectedTimes;
     }
 
     public void serve(int n){
@@ -71,8 +70,6 @@ public class Server{
                 connectedTimes.add(LocalDateTime.now());
                 //start the thread
                 (new ClientHandler(clientSock)).start();
-                
-                //continue looping
             }catch(Exception e){} //exit serve if exception
         }
     }
@@ -91,7 +88,7 @@ public class Server{
 
     public int factor(int n){
         int count = 0;
-        for (int i = 1; i <= n; i++) if (n % i == 0) count++;
+        for (int i = 1; i <= n; i++) if (n % i == 0) count++;   // simple algorithm, no optimization
         return count;
     }
 
@@ -108,8 +105,6 @@ public class Server{
             try{
                 out = new PrintWriter(sock.getOutputStream());
                 in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-
-                //read and echo back forever!
 
                 // handshake
                 String msg = in.readLine();
@@ -147,11 +142,4 @@ public class Server{
         }
 
     }
-    /*
-    public static void main(String args[]){
-        EchoSocketServer server = new EchoSocketServer(2021);
-        server.serve();
-    }
-    */  
-    
 }

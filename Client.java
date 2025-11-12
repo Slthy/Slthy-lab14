@@ -18,10 +18,6 @@ Client
     required to have (and their functionality).
 */
 public class Client{
-    // client.getSocket().getLocalAddress().toString()
-    // client.getSocket().getPort())
-
-    // client.handshake();
     private Socket s;
     private String host;
     private int port;
@@ -60,7 +56,7 @@ public class Client{
             System.err.print("IOException");
             System.exit(1);
         }
-        return "couldn't handshake";
+        return "couldn't handshake";    // error
     }
 
     public void handshake(){
@@ -89,13 +85,4 @@ public class Client{
         return s;
     }
 
-
-    public static void main(String args[]){
-        // connect with handshake
-
-        // send and receive message
-
-        // client.request(number.toString());
-
-    }
 }
